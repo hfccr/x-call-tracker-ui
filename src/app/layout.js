@@ -1,4 +1,3 @@
-"use client";
 import "./globals.css";
 import { PolybaseProvider } from "@polybase/react";
 import { Polybase } from "@polybase/client";
