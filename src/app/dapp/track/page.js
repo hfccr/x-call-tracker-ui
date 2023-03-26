@@ -47,11 +47,29 @@ const sendNotification = async (address, transfer) => {
   }
 };
 
+const randomizePlayer = () => {
+  const number = Math.floor(Math.random() * 1000000) + 1;
+  return number;
+};
+
 export default function ProviderLayout({ children }) {
   const { address } = useAccount();
   const [markedTransfers, setMarkedTransfers] = useState([]);
-  const url = `https://postgrest.testnet.connext.ninja/transfers?xcall_caller=eq.${address.toLowerCase()}&limit=100&offset=0&order=xcall_timestamp.desc&select=transfer_id,nonce,to,call_data,origin_domain,canonical_domain,canonical_id,destination_domain,bridged_amt,normalized_in,origin_sender,origin_chain,origin_transacting_asset,origin_transacting_amount,origin_bridged_asset,origin_bridged_amount,xcall_caller,xcall_transaction_hash,xcall_timestamp,xcall_gas_price,xcall_gas_limit,xcall_block_number,xcall_tx_origin,destination_chain,receive_local,status,routers,delegate,slippage,updated_slippage,destination_transacting_asset,destination_transacting_amount,destination_local_asset,destination_local_amount,execute_caller,execute_transaction_hash,execute_timestamp,execute_gas_price,execute_gas_limit,execute_block_number,execute_origin_sender,execute_tx_origin,reconcile_caller,reconcile_transaction_hash,reconcile_timestamp,reconcile_gas_price,reconcile_gas_limit,reconcile_block_number,reconcile_tx_origin,relayer_fees,error_status,execute_simulation_input,execute_simulation_from,execute_simulation_to,execute_simulation_network`;
-  const [{ data, loading, error }, refetch] = useAxios(url);
+  const [checkCount, setCheckCount] = useState(randomizePlayer());
+  const url = `https://postgrest.testnet.connext.ninja/transfers?&xcall_caller=eq.${address.toLowerCase()}&limit=100&offset=0&order=xcall_timestamp.desc&select=transfer_id,nonce,to,call_data,origin_domain,canonical_domain,canonical_id,destination_domain,bridged_amt,normalized_in,origin_sender,origin_chain,origin_transacting_asset,origin_transacting_amount,origin_bridged_asset,origin_bridged_amount,xcall_caller,xcall_transaction_hash,xcall_timestamp,xcall_gas_price,xcall_gas_limit,xcall_block_number,xcall_tx_origin,destination_chain,receive_local,status,routers,delegate,slippage,updated_slippage,destination_transacting_asset,destination_transacting_amount,destination_local_asset,destination_local_amount,execute_caller,execute_transaction_hash,execute_timestamp,execute_gas_price,execute_gas_limit,execute_block_number,execute_origin_sender,execute_tx_origin,reconcile_caller,reconcile_transaction_hash,reconcile_timestamp,reconcile_gas_price,reconcile_gas_limit,reconcile_block_number,reconcile_tx_origin,relayer_fees,error_status,execute_simulation_input,execute_simulation_from,execute_simulation_to,execute_simulation_network#checkCount=${checkCount}`;
+  const [{ data, loading, error }, refetch] = useAxios(url, {
+    useCache: false,
+  });
+  useEffect(() => {
+    const interval = setInterval(() => {
+      console.log("Calling refetch with address ", address);
+      console.log(url);
+      console.log(data);
+      setCheckCount(checkCount + 1);
+      refetch();
+    }, 25000);
+    return () => clearInterval(interval);
+  }, []);
   useEffect(() => {
     const sendNotifications = async (
       address,
@@ -63,29 +81,26 @@ export default function ProviderLayout({ children }) {
       console.log(transfers);
       if (Array.isArray(transfers)) {
         transfers.forEach((transfer) => {
+          console.log("Index is");
+          console.log(markedTransfers.indexOf(transfer.transfer_id));
           if (markedTransfers.indexOf(transfer.transfer_id) < 0) {
             console.log("Sending Notification", transfer);
             sendNotification(address, transfer);
             transferred.push(transfer.transfer_id);
           }
         });
+        const transferredx = transfers.map((transfer) => transfer.transfer_id);
+        setMarkedTransfers(transferredx);
+        console.log("transfers");
+        console.log(transfers);
+        console.log("marked transfers");
+        console.log(markedTransfers);
       }
-      const transferredx = [...markedTransfers, ...transferred];
-      setMarkedTransfers(transferredx);
-      console.log("transfers");
-      console.log(transfers);
-      console.log("marked transfers");
-      console.log(markedTransfers);
     };
-    const interval = setInterval(() => {
-      console.log("Calling refetch with address ", address);
-      console.log(url);
-      console.log(data);
-      refetch();
+    if (data) {
       sendNotifications(address, data, markedTransfers, setMarkedTransfers);
-    }, 10000);
-    return () => clearInterval(interval);
-  }, [refetch]);
+    }
+  }, [data]);
   return (
     <>
       <Tooltip title="PUSH">
@@ -108,7 +123,10 @@ export default function ProviderLayout({ children }) {
         justifyContent="center"
         alignItems="center"
       >
-        <Typography>Tracking requests</Typography>
+        <Typography>Tracking requests for address {address}</Typography>
+        <Typography>
+          Future versions will use server side offline tracking
+        </Typography>
       </Stack>
     </>
   );
