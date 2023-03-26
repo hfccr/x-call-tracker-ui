@@ -3,6 +3,11 @@ import { useEffect } from "react";
 import Image from "next/image";
 import { Inter } from "next/font/google";
 import styles from "./page.module.css";
+import { PolybaseProvider } from "@polybase/react";
+import { Polybase } from "@polybase/client";
+import { defaultNamespace } from "./../constants/polybase";
+
+const polybase = new Polybase({ defaultNamespace });
 
 const inter = Inter({ subsets: ["latin"] });
 
