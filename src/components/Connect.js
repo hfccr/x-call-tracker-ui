@@ -5,7 +5,6 @@ import { Button, ButtonGroup, Tooltip } from "@mui/material";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
 import { useAccount, useConnect, useDisconnect } from "wagmi";
 import toast from "react-hot-toast";
-import { fvmChain } from "@/util/chain";
 import { motion } from "framer-motion";
 
 const connector = new MetaMaskConnector();
@@ -33,7 +32,6 @@ export default function Connect({}) {
     },
   });
   const { connect } = useConnect({
-    chainId: fvmChain.id,
     connector,
     onSuccess() {
       toast.success("Account connected!", {
@@ -73,14 +71,22 @@ export default function Connect({}) {
   };
   return (
     <>
-      {showConnect && <Button onClick={handleConnect}>{message}</Button>}
+      {showConnect && (
+        <Button onClick={handleConnect} size="large">
+          {message}
+        </Button>
+      )}
       {!showConnect && (
         <ButtonGroup>
           <Tooltip title={`Copy ETH Address ${address}`}>
-            <Button onClick={copyAddressToClipboard}>{message}</Button>
+            <Button onClick={copyAddressToClipboard} size="large">
+              {message}
+            </Button>
           </Tooltip>
           <Tooltip title="Disconnect Account">
-            <Button onClick={handleConnect}>Disconnect</Button>
+            <Button onClick={handleConnect} size="large">
+              Disconnect
+            </Button>
           </Tooltip>
         </ButtonGroup>
       )}
