@@ -1,3 +1,4 @@
+"use client";
 import { Polybase } from "@polybase/client";
 import { defaultNamespace } from "./../constants/polybase";
 
