@@ -274,3 +274,7 @@
   transform: translateX(-100px);
   opacity: 0;
 }
+
+.menuItem {
+  font-family: "Lacquer";
+}

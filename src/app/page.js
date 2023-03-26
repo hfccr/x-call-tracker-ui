@@ -14,24 +14,17 @@ export default function Home() {
       <div className={styles.center}></div>
       <div className={styles.grid}>
         <Link href="/dapp/push" className={styles.card}>
-          <h2 className={inter.className}>
+          <h2 className={styles.menuItem}>
             Join Channel<span>&gt;</span>
           </h2>
-          <p className={inter.className}>Join X Call Tracker Push Channel</p>
+          <p className={styles.menuItem}>Join X Call Tracker Push Channel</p>
         </Link>
 
-        <Link href="/dapp/provider/about" className={styles.card}>
-          <h2 className={inter.className}>
+        <Link href="/dapp/track" className={styles.card}>
+          <h2 className={styles.menuItem}>
             Track xCall<span>&gt;</span>
           </h2>
-          <p className={inter.className}>Setup xCall tracking</p>
-        </Link>
-
-        <Link href="/dapp/trader" className={styles.card}>
-          <h2 className={inter.className}>
-            Create xCall<span>&gt;</span>
-          </h2>
-          <p className={inter.className}>Create xCalls</p>
+          <p className={styles.menuItem}>Setup xCall tracking</p>
         </Link>
       </div>
     </main>
